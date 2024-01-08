@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e7e6e6;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between; /* Spread columns */
+        }
+
+        .block {
+            border: 1px solid #dddddd;
+            border-left: 4px solid #41bf99; /* Change the color of the right border */
+            width: calc(20% - 20px); /* 25% width for each block with margin */
+            margin: 10px;
+            padding: 8px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            background-color: white;
+            
+        }
+        .chart {
+            display: flex;
+            width: 45%; /* Adjust the width of each chart */
+        }
+        #chart1,#chart2{
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            margin:30px;
+            background-color: white;
+            padding: 10px;
+        }
+        #p1{
+            color:rgba(65,191,153,255);
+        }
+        #p2{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Company Metrics</h2>
+
+    <div class="container">
+        <div class="block" id="1">
+            
+            <p id="p1">$406,411.29</p>
+            <h3>Total Revenue</h3>
+        </div>
+        <div class="block" >
+            
+            <p>$620</p>
+            <h3>Total Jobs Avg</h3>
+        </div>
+        <div class="block">
+            
+            <p>655</p>
+            <h3>Tickets Created</h3>
+        </div>
+        <div class="block">
+            
+            <p>735</p>
+            <h3>Tickets Scheduled</h3>
+        </div>
+        <div class="block" id="2">
+            
+            <p id="p2">$110,448.8</p>
+            <h3>Outstanding Amount</h3>
+        </div>
+
+        
+
+        <div class="block">
+            
+            <p>105</p>
+            <h3>Memberships Sold</h3>
+        </div>
+
+        
+
+        <div class="block">
+            
+            <p>436</p>
+            <h3>Jobs Completed</h3>
+        </div>
+
+        
+
+        <div class="block">
+            
+            <p>65</p>
+            <h3>Total Canceled</h3>
+        </div>
+
+       
+    </div>
+
+    <div class="chart">
+<canvas id="chart1"></canvas>
+<canvas id="chart2"></canvas>
+</div>
+<script src="chartScript.js"></script>
+</body>
+</html>
+
