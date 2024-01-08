@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload and Column Selection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <div id="step1">
+        <h2>Step 1: Upload a JSON or CSV file</h2>
+        <input type="file" id="file-input">
+        <button onclick="nextStep()">Next</button>
+    </div>
+
+    <div id="step2" style="display: none;">
+        <h2>Step 2: Select file format</h2>
+        <select id="format-select">
+            <option value="json">JSON</option>
+            <option value="csv">CSV</option>
+        </select>
+        <button onclick="nextStep()">Next</button>
+    </div>
+
+    <div id="step3" style="display: none;">
+        <h2>Step 3: Select columns</h2>
+        <div class="options">
+            <select multiple id="column-select"></select>
+        </div>
+        <div class="buttons">
+            <button type="button" id="addButton">>></button>
+            <button type="button" id="removeButton"><<</button>
+        </div>
+        <div class="options">
+            <label for="selected-fields">Selected Fields</label>
+            <select id="selected-fields" name="selected-fields" multiple></select>
+        </div>
+        <button onclick="processSelection()">Process</button>
+    </div>
+
+    <div id="display-data" style="display: none;">
+        <h2>Display Data</h2>
+        <div id="data-content"></div>
+    </div>
+
+    <script>
+        let fileData = null;
+        let currentStep = 1;
+        let jsonData = null;
+
+        function nextStep() {
+            if (currentStep === 1) {
+                const fileInput = document.getElementById('file-input');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert('Please select a file.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    fileData = event.target.result;
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'block';
+                    currentStep = 2;
+                };
+                reader.readAsText(file);
+            } else if (currentStep === 2) {
+                const formatSelect = document.getElementById('format-select');
+                const selectedFormat = formatSelect.value;
+
+                if (!selectedFormat) {
+                    alert('Please select a format.');
+                    return;
+                }
+
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+                currentStep = 3;
+
+                const columnSelect = document.getElementById('column-select');
+                columnSelect.innerHTML = '';
+
+                if (selectedFormat === 'json') {
+                    jsonData = JSON.parse(fileData);
+                    Object.keys(jsonData).forEach(key => {
+                        Object.keys(jsonData[key]).forEach(subkey => {
+                            const option = document.createElement('option');
+                            option.value = subkey;
+                            option.text = subkey;
+                            columnSelect.appendChild(option);
+                        });
+                    });
+                } else if (selectedFormat === 'csv') {
+                    // Logic to parse CSV and extract column names
+                    // Replace this with your code to parse CSV
+                    const csvData = parseCSV(fileData);
+                    const columnNames = extractColumnNames(csvData);
+
+                    columnNames.forEach(column => {
+                        const option = document.createElement('option');
+                        option.value = column;
+                        option.text = column;
+                        columnSelect.appendChild(option);
+                    });
+                }
+            } else if (currentStep === 3) {
+                const columnSelect = document.getElementById('column-select');
+                const selectedColumns = Array.from(columnSelect.selectedOptions).map(option => option.value);
+
+                console.log('Selected Columns:', selectedColumns);
+
+                // Display logic goes here (populate table with selected columns)
+                displaySelectedColumns(selectedColumns);
+
+                // Hide step 3 and show the table or next step
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('display-data').style.display = 'block';
+            }
+        }
+
+        function processSelection() {
+            const columnSelect = document.getElementById('column-select');
+            const selectedColumns = Array.from(columnSelect.selectedOptions).map(option => option.value);
+
+            console.log('Selected Columns:', selectedColumns);
+        }
+
+        function displaySelectedColumns(selectedColumns) {
+            const dataContent = document.getElementById('data-content');
+            dataContent.innerHTML = '';
+
+            // Create table headers
+            const table = document.createElement('table');
+            const tableHeader = table.createTHead();
+            const headerRow = tableHeader.insertRow();
+            selectedColumns.forEach(field => {
+                const headerCell = headerRow.insertCell();
+                headerCell.textContent = field;
+            });
+
+            // Populate table with data based on selected columns
+            jsonData.forEach(entry => {
+                const dataRow = table.insertRow();
+                selectedColumns.forEach(field => {
+                    const dataCell = dataRow.insertCell();
+                    dataCell.textContent = entry[field];
+                });
+            });
+
+            dataContent.appendChild(table);
+        }
+
+        document.getElementById('addButton').addEventListener('click', function() {
+            moveOptions('column-select', 'selected-fields');
+        });
+
+        document.getElementById('removeButton').addEventListener('click', function() {
+            moveOptions('selected-fields', 'column-select');
+        });
+
+        function moveOptions(fromId, toId) {
+            const fromSelect = document.getElementById(fromId);
+            const toSelect = document.getElementById(toId);
+            const selectedOptions = Array.from(fromSelect.selectedOptions);
+            
+            selectedOptions.forEach(option => {
+                toSelect.appendChild(option);
+            });
+        }
+       
+    </script>
+</body>
+</html>
